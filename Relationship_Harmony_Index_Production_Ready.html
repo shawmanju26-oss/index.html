@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relationship Harmony Index™ Assessment</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff5fa2;--purple:#7c4dff;--gold:#f6d365;}
+*{box-sizing:border-box}
+body{
+margin:0;font-family:Poppins,sans-serif;color:#fff;overflow-x:hidden;
+background:linear-gradient(135deg,var(--pink),var(--purple),var(--gold));
+min-height:100vh;
+}
+.bg span{
+position:fixed;border-radius:50%;
+background:rgba(255,255,255,.12);
+animation:float 12s infinite ease-in-out;
+}
+.bg span:nth-child(1){width:180px;height:180px;top:8%;left:5%}
+.bg span:nth-child(2){width:120px;height:120px;top:70%;right:8%}
+.bg span:nth-child(3){width:90px;height:90px;top:40%;right:25%}
+@keyframes float{50%{transform:translateY(-30px) rotate(20deg)}}
+
+.container{max-width:760px;margin:auto;padding:20px}
+.card{
+background:rgba(255,255,255,.15);
+backdrop-filter:blur(20px);
+border:1px solid rgba(255,255,255,.2);
+border-radius:28px;
+padding:28px;
+box-shadow:0 8px 40px rgba(0,0,0,.2);
+animation:cardFade .8s ease;
+transition:.4s;
+}
+.card:hover{transform:translateY(-4px)}
+h1,h2{text-align:center}
+.sub{text-align:center;opacity:.95}
+
+.progress{height:12px;background:rgba(255,255,255,.15);border-radius:999px;overflow:hidden}
+.bar{
+height:100%;
+background:linear-gradient(90deg,var(--gold),#fff);
+transition:width .5s ease;
+}
+.qnum{text-align:right;margin:10px 0}
+
+.question{font-size:1.25rem;font-weight:600;margin:20px 0}
+.option{
+display:block;width:100%;padding:14px;margin:10px 0;
+border:none;border-radius:16px;
+background:rgba(255,255,255,.12);
+color:#fff;cursor:pointer;
+transition:all .3s ease;
+}
+.option:hover{
+transform:translateY(-3px) scale(1.02);
+background:rgba(255,255,255,.30);
+}
+.option.selected{
+background:rgba(255,255,255,.35);
+transform:scale(1.02);
+}
+
+.nav{display:flex;justify-content:space-between;margin-top:20px}
+.btn,.cta{
+border:none;padding:12px 22px;border-radius:14px;
+font-weight:600;cursor:pointer;
+transition:.3s ease;
+}
+.btn:hover,.cta:hover{
+transform:translateY(-3px) scale(1.05);
+}
+.btn{background:#fff;color:#6b3cff}
+.hidden{display:none}
+
+.result{text-align:center}
+.circle{
+width:220px;height:220px;border-radius:50%;
+margin:20px auto;
+display:flex;align-items:center;justify-content:center;
+font-size:2rem;font-weight:700;
+color:#000;
+background:conic-gradient(#fff 0deg, rgba(255,255,255,.15) 0deg);
+animation:popIn .8s ease;
+}
+#score{color:#000}
+
+.cta{
+display:inline-block;text-decoration:none;
+background:#fff;color:#6b3cff;
+margin-top:18px;
+}
+
+.fade{animation:questionSlide .35s ease}
+canvas{position:fixed;inset:0;pointer-events:none}
+
+@keyframes cardFade{
+from{opacity:0;transform:translateY(20px)}
+to{opacity:1;transform:translateY(0)}
+}
+@keyframes questionSlide{
+from{opacity:0;transform:translateX(20px)}
+to{opacity:1;transform:translateX(0)}
+}
+@keyframes popIn{
+from{opacity:0;transform:scale(.7)}
+to{opacity:1;transform:scale(1)}
+}
+</style>
+</head>
+<body>
+<div class="bg"><span></span><span></span><span></span></div>
+<canvas id="confetti"></canvas>
+
+<div class="container">
+<div class="card" id="quizCard">
+<h1>Discover Your Relationship Harmony Index™</h1>
+<p class="sub">Answer 10 questions to uncover the current state of emotional connection, communication, and relationship harmony.</p>
+
+<div class="qnum" id="qnum">Question 1 of 10</div>
+<div class="progress"><div class="bar" id="bar"></div></div>
+<div id="quiz"></div>
+
+<div class="nav">
+<button class="btn" id="prev">Previous</button>
+<button class="btn" id="next">Next</button>
+</div>
+</div>
+
+<div class="card hidden result" id="resultCard">
+<h2>Your Relationship Harmony Index™</h2>
+<div class="circle" id="circle"><span id="score">0%</span></div>
+<h3 id="zone"></h3>
+<p id="desc"></p>
+<p><strong>Relationship transformation doesn't begin when your partner changes. It begins when awareness increases.</strong></p>
+<a class="cta" href="https://YOUR-WEBINAR-LINK.com" target="_blank">Continue To The Webinar</a>
+</div>
+</div>
+
+<script>
+const questions=[
+["How often do you feel emotionally understood by your partner?",["Always",10],["Often",8],["Sometimes",6],["Rarely",3],["Almost Never",0]],
+["How often do you feel like you're carrying the relationship alone?",["Never",10],["Rarely",8],["Sometimes",6],["Often",3],["Almost Always",0]],
+["When conflict happens, how easily are issues resolved?",["Very Easily",10],["Usually",8],["Sometimes",6],["Rarely",3],["Never",0]],
+["How connected do you currently feel to your partner?",["Deeply Connected",10],["Mostly Connected",8],["Moderately Connected",6],["Slightly Connected",3],["Disconnected",0]],
+["Do you feel your emotional needs are understood?",["Completely",10],["Mostly",8],["Sometimes",6],["Rarely",3],["Not At All",0]],
+["How often do you worry about the impact of your relationship on your children or family?",["Never",10],["Rarely",8],["Sometimes",6],["Often",3],["Constantly",0]],
+["How hopeful do you feel about your relationship's future?",["Extremely Hopeful",10],["Hopeful",8],["Unsure",5],["Doubtful",3],["Hopeless",0]],
+["How often do misunderstandings create tension?",["Never",10],["Rarely",8],["Sometimes",6],["Often",3],["Very Often",0]],
+["Do you feel appreciated by your partner?",["Always",10],["Often",8],["Sometimes",6],["Rarely",3],["Never",0]],
+["If nothing changed for the next 5 years, how concerned would you be?",["Not Concerned",10],["Slightly Concerned",8],["Moderately Concerned",6],["Very Concerned",3],["Extremely Concerned",0]]
+];
+
+let current=0,answers=new Array(10).fill(null);
+const quiz=document.getElementById("quiz");
+
+function render(){
+let q=questions[current];
+qnum.innerText=`Question ${current+1} of 10`;
+bar.style.width=((current+1)*10)+"%";
+quiz.className="fade";
+quiz.innerHTML='<div class="question">'+q[0]+'</div>'+
+q.slice(1).map(o=>`<button class="option ${answers[current]===o[1]?'selected':''}" onclick="selectAns(${o[1]})">${o[0]}</button>`).join('');
+}
+window.selectAns=v=>{answers[current]=v;render();}
+
+prev.onclick=()=>{if(current>0){current--;render();}}
+next.onclick=()=>{
+if(answers[current]==null){alert("Please select an answer.");return;}
+if(current<9){current++;render();}else finish();
+}
+
+function finish(){
+let pct=Math.round(answers.reduce((a,b)=>a+b,0));
+quizCard.classList.add("hidden");
+resultCard.classList.remove("hidden");
+
+let zone="",desc="";
+if(pct<=20){zone="Critical Connection Zone";desc="Your relationship may be experiencing significant emotional disconnection. Awareness is the first step toward positive change.";}
+else if(pct<=40){zone="Relationship Stress Zone";desc="There are noticeable challenges affecting your connection. With the right guidance and awareness, meaningful improvement is possible.";}
+else if(pct<=60){zone="Growth Opportunity Zone";desc="Your relationship has strengths, but unresolved patterns may be limiting deeper connection and harmony.";}
+else if(pct<=80){zone="Strong Foundation Zone";desc="You already have many healthy relationship elements in place. Continued emotional awareness can strengthen your connection even further.";}
+else {zone="Relationship Harmony Zone";desc="Your relationship demonstrates strong emotional connection, understanding, and resilience.";confettiBurst();}
+
+zone.innerText?null:0;
+document.getElementById("zone").innerText=zone;
+document.getElementById("desc").innerText=desc;
+animateScore(pct);
+}
+
+function animateScore(target){
+let c=0;
+let timer=setInterval(()=>{
+c++;
+score.innerText=c+"%";
+circle.style.background=`conic-gradient(#fff ${c*3.6}deg, rgba(255,255,255,.15) 0)`;
+if(c>=target) clearInterval(timer);
+},15);
+}
+
+function confettiBurst(){
+const canvas=document.getElementById("confetti");
+const ctx=canvas.getContext("2d");
+canvas.width=innerWidth; canvas.height=innerHeight;
+let p=[...Array(150)].map(()=>({x:Math.random()*canvas.width,y:-20,s:Math.random()*6+2,v:Math.random()*5+2}));
+let t=setInterval(()=>{
+ctx.clearRect(0,0,canvas.width,canvas.height);
+p.forEach(a=>{a.y+=a.v;ctx.fillStyle=["#fff","#ffd700","#ff5fa2"][Math.floor(Math.random()*3)];ctx.fillRect(a.x,a.y,a.s,a.s);});
+if(p.every(a=>a.y>canvas.height)){clearInterval(t);ctx.clearRect(0,0,canvas.width,canvas.height);}
+},30);
+}
+
+render();
+</script>
+</body>
+</html>
